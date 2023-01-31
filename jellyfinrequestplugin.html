@@ -1,0 +1,56 @@
+<!-- Create a button for submitting a request -->
+<button id="submitRequestButton">Submit Request</button>
+
+<!-- Create a form for entering the request -->
+<form id="submitRequestForm" style="display: none;">
+  <textarea id="requestText" rows="4" cols="50"></textarea>
+  <br><br>
+  <button type="submit">Submit</button>
+  <button type="button" id="cancelRequestButton">Cancel</button>
+</form>
+
+<script>
+  // Get the submit request button and form
+  var submitRequestButton = document.getElementById("submitRequestButton");
+  var submitRequestForm = document.getElementById("submitRequestForm");
+
+  // Get the request text area and cancel button
+  var requestText = document.getElementById("requestText");
+  var cancelRequestButton = document.getElementById("cancelRequestButton");
+
+  // Show the request form when the submit request button is clicked
+  submitRequestButton.addEventListener("click", function () {
+    submitRequestButton.style.display = "none";
+    submitRequestForm.style.display = "block";
+  });
+
+  // Hide the request form when the cancel button is clicked
+  cancelRequestButton.addEventListener("click", function () {
+    submitRequestButton.style.display = "block";
+    submitRequestForm.style.display = "none";
+  });
+
+  // Submit the request when the form is submitted
+  submitRequestForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    // Get the request text
+    var request = requestText.value;
+
+    // Submit the request using the Jellyfin API
+    apiClient.postJSON("/Plugins/com.jellyfin.movierequest/SubmitRequest", { request: request })
+      .then(function (response) {
+        // Show a success message
+        alert(response.message);
+
+        // Reset the form and hide it
+        requestText.value = "";
+        submitRequestButton.style.display = "block";
+        submitRequestForm.style.display = "none";
+      })
+      .catch(function (error) {
+        // Show an error message
+        alert("An error occurred: " + error);
+      });
+  });
+</script>
